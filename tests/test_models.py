@@ -102,6 +102,7 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(new_product.category, product.category)
 
     def test_read_a_product(self):
+        """Test reading a product from the database"""
         product = ProductFactory()
         product.id = None
         product.create()
@@ -114,6 +115,7 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found_product.price, product.price)
 
     def test_update_a_product(self):
+        """Test updating a product's description"""
         product = ProductFactory()
         product.id = None
         product.create()
@@ -131,6 +133,7 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(products[0].description, "test")
 
     def test_delete_a_product(self):
+        """Test deleting a product from the database"""
         product = ProductFactory()
         product.create()
         self.assertEqual(len(Product.all()), 1)
@@ -138,6 +141,7 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(len(Product.all()), 0)
 
     def test_list_all_products(self):
+        """Test listing all products in the database"""
         products = Product.all()
         self.assertEqual(products, [])
         for _ in range(5):
@@ -147,6 +151,7 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(len(products), 5)
 
     def test_find_by_name(self):
+        """Test finding products by name"""
         products = ProductFactory.create_batch(5)
         for product in products:
             product.create()
@@ -158,6 +163,7 @@ class TestProductModel(unittest.TestCase):
             self.assertEqual(product.name, name)
 
     def test_find_by_availability(self):
+        """Test finding products by availability"""
         products = ProductFactory.create_batch(10)
         for product in products:
             product.create()
@@ -169,6 +175,7 @@ class TestProductModel(unittest.TestCase):
             self.assertEqual(product.available, available)
 
     def test_find_by_category(self):
+        """Test finding products by category"""
         products = ProductFactory.create_batch(10)
         for product in products:
             product.create()
@@ -178,3 +185,10 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found.count(), count)
         for product in found:
             self.assertEqual(product.category, category)
+
+    def test_find_by_price_with_string(self):
+        """Test finding products by price using a string input"""
+        product = ProductFactory(price=Decimal("15.00"))
+        product.create()
+        found = Product.find_by_price("15.00").all()
+        self.assertIn(product, found)
